@@ -40,6 +40,12 @@
       "relation": "manyToMany",
       "target": "api::category.category",
       "inversedBy": "products"
+    },
+    "city": {
+      "type": "string"
+    },
+    "is_favorite": {
+      "type": "boolean"
     }
   }
 }

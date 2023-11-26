@@ -587,7 +587,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
   };
   options: {
     draftAndPublish: false;
-    timestamps: true;
   };
   attributes: {
     username: Attribute.String &
@@ -615,6 +614,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'plugin::users-permissions.user',
       'manyToOne',
       'plugin::users-permissions.role'
+    >;
+    user_addresses: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::user-address.user-address'
     >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
@@ -720,6 +724,7 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     singularName: 'order';
     pluralName: 'orders';
     displayName: 'order';
+    description: '';
   };
   options: {
     draftAndPublish: true;
@@ -733,6 +738,7 @@ export interface ApiOrderOrder extends Schema.CollectionType {
     status: Attribute.Enumeration<
       ['waiting_payment', 'packaging', 'on_delivery', 'done', 'cancel']
     >;
+    buyerId: Attribute.BigInteger;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -804,6 +810,8 @@ export interface ApiProductProduct extends Schema.CollectionType {
       'manyToMany',
       'api::category.category'
     >;
+    city: Attribute.String;
+    is_favorite: Attribute.Boolean;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -815,6 +823,85 @@ export interface ApiProductProduct extends Schema.CollectionType {
       Attribute.Private;
     updatedBy: Attribute.Relation<
       'api::product.product',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiPromotionPromotion extends Schema.CollectionType {
+  collectionName: 'promotions';
+  info: {
+    singularName: 'promotion';
+    pluralName: 'promotions';
+    displayName: 'promotion';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    title: Attribute.String;
+    promotion: Attribute.String;
+    value: Attribute.Decimal;
+    image: Attribute.Media;
+    stock: Attribute.Integer;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::promotion.promotion',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::promotion.promotion',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiUserAddressUserAddress extends Schema.CollectionType {
+  collectionName: 'user_addresses';
+  info: {
+    singularName: 'user-address';
+    pluralName: 'user-addresses';
+    displayName: 'user_address';
+    description: '';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    nama_receiver: Attribute.String;
+    phone_number: Attribute.String;
+    address: Attribute.Text;
+    province: Attribute.String;
+    city: Attribute.String;
+    subdistrict: Attribute.String;
+    postal_code: Attribute.String;
+    is_default: Attribute.Boolean;
+    user: Attribute.Relation<
+      'api::user-address.user-address',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    id_subdistrict: Attribute.String;
+    createdAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    publishedAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::user-address.user-address',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    updatedBy: Attribute.Relation<
+      'api::user-address.user-address',
       'oneToOne',
       'admin::user'
     > &
@@ -842,6 +929,8 @@ declare module '@strapi/types' {
       'api::order.order': ApiOrderOrder;
       'api::payment-callback.payment-callback': ApiPaymentCallbackPaymentCallback;
       'api::product.product': ApiProductProduct;
+      'api::promotion.promotion': ApiPromotionPromotion;
+      'api::user-address.user-address': ApiUserAddressUserAddress;
     }
   }
 }
